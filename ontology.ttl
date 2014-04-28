@@ -1,0 +1,196 @@
+@prefix : <http://benangmerah.net/ontology/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix org: <http://www.w3.org/ns/org#> .
+
+@prefix qb: <http://purl.org/linked-data/cube#> .
+@prefix sdmx-concept: <http://purl.org/linked-data/sdmx/2009/concept#> .
+@prefix sdmx-dimension: <http://purl.org/linked-data/sdmx/2009/dimension#> .
+@prefix sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> .
+@prefix sdmx-measure: <http://purl.org/linked-data/sdmx/2009/measure#> .
+@prefix sdmx-metadata: <http://purl.org/linked-data/sdmx/2009/metadata#> .
+@prefix sdmx-code: <http://purl.org/linked-data/sdmx/2009/code#> .
+
+# Ontology header
+: a owl:Ontology ;
+  rdfs:label "The BenangMerah Ontology" ;
+  rdfs:comment "The ontology used by the BenangMerah project (http//benangmerah.net/)." ;
+  owl:priorVersion <http://sw.benangmerah.net/ontology/idn-adm-div/> .
+
+# Classes
+
+  ## AdministrativeDivision
+  :AdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :Place ;
+    rdfs:comment "An administrative division of a country, or of another administrative division." .
+
+  ## Desa
+  :Desa a owl:Class ;
+    rdfs:label "Desa" ;
+    rdfs:subClassOf :FourthOrderAdministrativeDivision ,
+      :IndonesianAdministrativeDivision .
+
+  ## Distrik
+  :Distrik a owl:Class ;
+    rdfs:label "Distrik" ;
+    rdfs:subClassOf :IndonesianAdministrativeDivision ,
+      :ThirdOrderAdministrativeDivision .
+
+  ## FirstOrderAdministrativeDivision
+  :FirstOrderAdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :AdministrativeDivision .
+
+  ## FourthOrderAdministrativeDivision
+  :FourthOrderAdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :AdministrativeDivision .
+
+  ## IndonesianAdministrativeDivision
+  :IndonesianAdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :AdministrativeDivision .
+
+  ## Kabupaten
+  :Kabupaten a owl:Class ;
+    rdfs:label "Kabupaten" ;
+    rdfs:subClassOf :IndonesianAdministrativeDivision ,
+      :SecondOrderAdministrativeDivision .
+
+  ## KabupatenAdministrasi
+  :KabupatenAdministrasi a owl:Class ;
+    rdfs:label "Kabupaten Administratif" ;
+    rdfs:subClassOf :Kabupaten .
+
+  ## Kecamatan
+  :Kecamatan a owl:Class ;
+    rdfs:label "Kecamatan" ;
+    rdfs:subClassOf :IndonesianAdministrativeDivision ,
+      :ThirdOrderAdministrativeDivision .
+
+  ## Kelurahan
+  :Kelurahan a owl:Class ;
+    rdfs:label "Kelurahan" ;
+    rdfs:subClassOf :FourthOrderAdministrativeDivision .
+
+  ## Kota
+  :Kota a owl:Class ;
+    rdfs:label "Kota" ;
+    rdfs:subClassOf :IndonesianAdministrativeDivision ,
+      :SecondOrderAdministrativeDivision .
+
+  ## KotaAdministrasi
+  :KotaAdministrasi a owl:Class ;
+    rdfs:label "Kota Administrasi" ;
+    rdfs:subClassOf :Kota .
+
+  ## Place
+  :Place a owl:Class .
+
+  ## PostCodeArea
+  :PostCodeArea a owl:Class ;
+    rdfs:subClassOf :Place ;
+    rdfs:comment "An area spanning places which share the same postcode." .
+
+  ## Provinsi
+  :Provinsi a owl:Class ;
+    rdfs:label "Provinsi" ;
+    rdfs:subClassOf :FirstOrderAdministrativeDivision ,
+      :IndonesianAdministrativeDivision .
+
+  ## PseudoAdministrativeDivision
+  :PseudoAdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :Place ;
+    rdfs:comment "A place which indicates an area spanning multiple administrative divisions, without being part of the official hierarchy of administrative divisions." .
+
+  ## SecondOrderAdministrativeDivision
+  :SecondOrderAdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :AdministrativeDivision .
+
+  ## ThirdOrderAdministrativeDivision
+  :ThirdOrderAdministrativeDivision a owl:Class ;
+    rdfs:subClassOf :AdministrativeDivision .
+
+  ## WilayahOnt/Country
+  :Country a owl:Class ;
+    rdfs:subClassOf :Place ;
+    rdfs:comment "A country." .
+
+# Object properties
+
+  ## contains
+  :contains a owl:ObjectProperty ,
+      owl:TransitiveProperty .
+
+  ## hasChild
+  :hasChild a owl:ObjectProperty ;
+    rdfs:comment "Indicates that {object} is a child of {subject} in the hierarchy of administrative divisions." ;
+    rdfs:domain :AdministrativeDivision ;
+    rdfs:range :AdministrativeDivision ;
+    rdfs:subPropertyOf :contains ;
+    owl:inverseOf :hasParent .
+
+  ## hasLocationIn
+  :hasLocationIn a owl:ObjectProperty ;
+    rdfs:comment "Indicates that {subject} has a physical location in the place identified by {object}." ;
+    rdfs:range :Place ;
+    rdfs:subPropertyOf :isInside ;
+    rdfs:domain [
+      a owl:Class ;
+      owl:complementOf :Place
+    ] .
+
+  ## refArea
+  :refArea a owl:ObjectProperty, qb:DimensionProperty ;
+    rdfs:label "Reference area/administrative division"@en, "Daerah referensi"@id ;
+    rdfs:subPropertyOf sdmx-dimension:refArea ;
+    rdfs:range :AdministrativeDivision ;
+    qb:concept sdmx-concept:refArea .
+
+  ## hasParent
+  :hasParent a owl:ObjectProperty ;
+    rdfs:comment "Indicates that {object} is the parent of {subject} in the hierarchy of administrative divisions." ;
+    rdfs:range :AdministrativeDivision ;
+    rdfs:domain :AdministrativeDivision ;
+    rdfs:subPropertyOf :isInside .
+
+  ## isInside
+  :isInside a owl:ObjectProperty ,
+      owl:TransitiveProperty .
+
+  ## refPeriod
+  :refPeriod a owl:DatatypeProperty, qb:DimensionProperty ;
+    rdfs:label "Reference period"@en, "Perioda"@id ;
+    rdfs:subPropertyOf sdmx-dimension:timePeriod .
+
+# Data properties
+
+  ## hasGovernmentCode
+  :hasGovernmentCode a owl:DatatypeProperty .
+
+  ## hasPostCode
+  :hasPostCode a owl:DatatypeProperty .
+
+# General axioms
+
+  [ a owl:AllDisjointClasses ;
+    owl:members ( :FirstOrderAdministrativeDivision
+    :FourthOrderAdministrativeDivision
+    :SecondOrderAdministrativeDivision
+    :ThirdOrderAdministrativeDivision
+    )
+  ] .
+
+  [ a owl:AllDisjointClasses ;
+    owl:members ( :Desa
+    :Distrik
+    :Kabupaten
+    :Kecamatan
+    :Kota
+    :Provinsi
+    )
+  ] .
